@@ -1,4 +1,5 @@
 import re
+import sys
 import time
 import argparse
 import requests
@@ -8,7 +9,11 @@ from openpyxl.styles import Font
 from pathlib import Path
 
 BASE_URL = "https://www.5movierulz.graphics/bollywood-movie-free/"
-DOWNLOAD_DIR = Path(__file__).parent / "download"
+
+# When packaged with PyInstaller --onefile, __file__ points to a temp dir.
+# sys.executable always points to the actual binary/script location.
+BASE_DIR = Path(sys.executable).parent if getattr(sys, "frozen", False) else Path(__file__).parent
+DOWNLOAD_DIR = BASE_DIR / "download"
 
 
 def page_url(page: int, base: str) -> str:
@@ -239,5 +244,5 @@ if __name__ == "__main__":
     else:
         print(f"\nDownloading images to {DOWNLOAD_DIR} ...\n")
         download_images(all_rows)
-        out = Path(__file__).parent / "movies.xlsx"
+        out = BASE_DIR / "movies.xlsx"
         write_excel(all_rows, out)
