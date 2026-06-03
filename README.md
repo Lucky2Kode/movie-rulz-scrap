@@ -1,118 +1,108 @@
-# Movierulz Featured Movies Scraper
+# Movierulz Movie Scraper
 
-A Python script that scrapes the featured movies listing, extracts movie metadata (title, year, language), downloads poster images, and saves everything into an Excel file.
-
----
-
-## What It Does
-
-1. Fetches the featured movies page(s) from the site
-2. Parses each movie entry to extract:
-   - **Movie name** — title without year or quality tags
-   - **Year** — release year from the listing
-   - **Language** — single language (e.g. `Tamil`) or `All` when multiple languages are listed
-3. Downloads the poster image for each unique movie into the `download/` folder
-4. Writes all entries to `movies.xlsx` with columns: `Movie | Year | Lang | Image File`
-
----
-
-## Project Structure
-
-```
-Movierulz/
-├── scrape_movies.py   # Main scraper script
-├── movies.xlsx        # Output Excel file (created on first run)
-├── download/          # Downloaded poster images (created on first run)
-│   ├── Arjun Son of Vyjayanthi (2026).jpg
-│   └── ...
-├── venv/              # Python virtual environment
-└── README.md
-```
+A modular Python scraper that fetches movie listings from a Movierulz-style site, downloads poster images, fetches YouTube trailer URLs, and tracks everything in an Excel file with daily change history.
 
 ---
 
 ## Setup
 
-**Requirements:** Python 3.8+
-
-Create the virtual environment and install dependencies (one-time setup):
+**Requirements:** Python 3.10+
 
 ```bash
 python3 -m venv venv
-venv/bin/pip install requests beautifulsoup4 openpyxl
+source venv/bin/activate
+pip install requests beautifulsoup4 openpyxl cloudscraper playwright yt-dlp
+playwright install chromium
 ```
 
 ---
 
-## Commands
+## Usage
 
-### Scrape page 1 (default)
 ```bash
-venv/bin/python scrape_movies.py
+source venv/bin/activate
+
+# Home page (latest movies)
+python main.py home <url>
+
+# Featured / category pages
+python main.py featured <url> <start> [end | all]
+
+# Search by keyword
+python main.py search <url> <query> [--pages N]
 ```
 
-### Scrape a specific page
+### Examples
+
 ```bash
-venv/bin/python scrape_movies.py 3
-```
-Fetches: `https://www.5movierulz.graphics/category/featured/page/3/`
+# Scrape home page
+python main.py home https://www.5movierulz.graphics/
 
-### Scrape a range of pages
+# Scrape featured page 1
+python main.py featured https://www.5movierulz.graphics/category/featured/ 1
+
+# Scrape featured pages 1 to 5
+python main.py featured https://www.5movierulz.graphics/category/featured/ 1 5
+
+# Scrape all featured pages
+python main.py featured https://www.5movierulz.graphics/category/featured/ all
+
+# Search for a movie
+python main.py search https://www.5movierulz.graphics/ "Pushpa" --pages 2
+```
+
+### Optional flags
+
 ```bash
-venv/bin/python scrape_movies.py 2 5
+--no-images     Skip image downloads
+--no-trailers   Skip YouTube trailer fetch
 ```
-Fetches pages 2, 3, 4, and 5 in sequence and combines all results into a single Excel file.
-
----
-
-## Language Detection Logic
-
-Each movie listing looks like:
-
-```
-Arjun Son of Vyjayanthi (2026) HDRip Tamil (Original) Full Movie Watch Online Free
-Project Hail Mary (2026) HDRip Original Audios [Telugu + Tamil + Hindi + Malayalam + Kannada + Eng] Dubbed Full Movie Watch Online Free
-```
-
-| Condition | Result |
-|---|---|
-| Single language in listing | That language (e.g. `Tamil`, `Hindi`) |
-| Multiple languages in `[Lang1 + Lang2 + ...]` | `All` |
-| No recognisable language found | `Unknown` |
-
-Supported languages: Telugu, Tamil, Hindi, Malayalam, Kannada, Bengali, Punjabi, Marathi, Gujarati, Odia, English, Korean, Japanese, Chinese.
-
----
-
-## Image Downloads
-
-- Posters are saved as `Movie Name (Year).jpg` in the `download/` folder
-- If the same movie appears multiple times (different dub versions), the poster is downloaded only once
-- Already-downloaded posters are skipped on subsequent runs (`[skip]` in output)
-- A short delay (0.3s) is added between image downloads
 
 ---
 
 ## Output
 
-**Console output** shows progress for each page:
+### Excel files — `output/`
+
+| Column | Description |
+|---|---|
+| Movie | Title |
+| Year | Release year |
+| Lang | Language(s) |
+| Page | Page number scraped from |
+| Image File | Relative path to poster |
+| Trailer URL | YouTube trailer link |
+| Date Added | Date first seen |
+
+Each file has two tabs:
+- **Movies** — full listing, newest entries at the top
+- **Daily Summary** — count of new movies added per day
+
+### Poster images — `download/`
+
 ```
---- Page 2: https://www.5movierulz.graphics/category/featured/page/2/
-  Love Mocktail 3 | 2026 | Kannada | img=yes
-  Enola Holmes | 2020 | All | img=yes
-  ...
-
-Downloading images to .../download ...
-  [saved] Love Mocktail 3 (2026).jpg
-  [skip]  Dacoit (2026).jpg already exists
-  ...
-
-Saved 16 entries to .../movies.xlsx
+download/
+├── home/
+│   ├── 06-02-2026/     ← one folder per day
+│   └── 06-03-2026/
+└── featured/
+    ├── 1/              ← one folder per page
+    └── 715/
 ```
 
-**movies.xlsx** columns:
+---
 
-| Movie | Year | Lang | Image File |
-|---|---|---|---|
-| Love Mocktail 3 | 2026 | Kannada | Love Mocktail 3 (2026).jpg |
-| Project Hail Mary | 2026 | All | Project Hail Mary (2026).jpg |
+## Modules
+
+| File | Purpose |
+|---|---|
+| `modules/config.py` | Paths, headers, known languages |
+| `modules/parser.py` | Text parsing, language detection |
+| `modules/scraper.py` | HTTP fetch with Cloudflare bypass |
+| `modules/browser.py` | Persistent Chrome session via Playwright |
+| `modules/downloader.py` | Poster image downloads |
+| `modules/exporter.py` | Excel read/write with deduplication |
+| `modules/trailer.py` | YouTube trailer URL search via yt-dlp |
+| `modules/home.py` | Home page module |
+| `modules/featured.py` | Featured/category page module |
+| `modules/search.py` | Search module |
