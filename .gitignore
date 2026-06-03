@@ -3,6 +3,14 @@ build/
 *.spec
 __pycache__/
 *.pyc
-download/
-movies.xlsx
 .DS_Store
+
+# Output files
+output/
+movies.xlsx
+
+# Download folder — keep structure, ignore actual images
+download/**/*.jpg
+download/**/*.jpeg
+download/**/*.png
+download/**/*.webp

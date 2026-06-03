@@ -39,14 +39,33 @@ HEADERS = {
 
 def parse_entry(text: str) -> dict:
     text = text.strip()
+    if not text:
+        return None
 
     year_match = re.search(r'\((\d{4})\)', text)
-    if not year_match:
-        return None
-    year = year_match.group(1)
-    movie = text[:year_match.start()].strip()
+    if year_match:
+        year = year_match.group(1)
+        # Everything before the year becomes the base title
+        movie = re.sub(r'\s+', ' ', text[:year_match.start()]).strip()
+        after_year = text[year_match.end():]
+    else:
+        year = "N/A"
+        movie = re.sub(r'\s+', ' ', text).strip()
+        after_year = text
 
-    after_year = text[year_match.end():]
+    # Fallback: if title is empty, use full text
+    if not movie:
+        movie = re.sub(r'\s+', ' ', text).strip()
+
+    # Append Season/Part/Episode qualifiers that appear after the year so that
+    # "Movie (2023) Part 1" and "Movie (2023) Part 2" get distinct titles/keys.
+    qualifier = re.search(
+        r'\b((?:Season|S)\s*\d+(?:\s*(?:Part|P|Ep(?:isode)?)\s*\d+)?'
+        r'|(?:Part|P|Ep(?:isode)?)\s*\d+)\b',
+        after_year, re.IGNORECASE
+    )
+    if qualifier:
+        movie = f"{movie} {qualifier.group(1).strip()}"
 
     # Check for bracket with multiple languages: [Telugu + Tamil + ...]
     bracket_match = re.search(r'\[([^\]]+)\]', after_year)
