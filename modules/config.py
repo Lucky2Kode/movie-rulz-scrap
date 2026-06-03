@@ -5,7 +5,7 @@ from pathlib import Path
 import cloudscraper
 
 BASE_DIR = Path(sys.executable).parent if getattr(sys, "frozen", False) else Path(__file__).parent.parent
-DOWNLOAD_DIR = BASE_DIR / "download"
+DOWNLOAD_DIR = BASE_DIR / "downloads"
 OUTPUT_DIR = BASE_DIR / "output"
 
 KNOWN_LANGS = [

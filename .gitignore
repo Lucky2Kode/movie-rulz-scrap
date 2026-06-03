@@ -9,7 +9,7 @@ __pycache__/
 movies.xlsx
 
 # Download folder — keep structure, ignore actual images
-download/**/*.jpg
-download/**/*.jpeg
-download/**/*.png
-download/**/*.webp
+downloads/**/*.jpg
+downloads/**/*.jpeg
+downloads/**/*.png
+downloads/**/*.webp
