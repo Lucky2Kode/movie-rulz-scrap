@@ -7,7 +7,7 @@ Create the virtual environment and install all dependencies:
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install requests beautifulsoup4 openpyxl cloudscraper playwright yt-dlp
+pip install -r requirements.txt
 playwright install chromium
 ```
 
@@ -39,21 +39,26 @@ deactivate
 
 Scrapes the main page of the site for the most recently added movies.
 
-```bash
-# Basic run — scrape page 1
-python main.py home https://www.5movierulz.graphics/
+The URL is optional — defaults to `DEFAULT_HOME_URL` set in `modules/config.py`.
 
-# Scrape multiple pages
-python main.py home https://www.5movierulz.graphics/ 1 3
+```bash
+# Basic run — scrape page 1 (uses default URL)
+python main.py home
+
+# Scrape multiple pages (uses default URL)
+python main.py home 1 3
 
 # Skip image downloads (faster, Excel only)
-python main.py home https://www.5movierulz.graphics/ --no-images
+python main.py home --no-images
 
 # Skip trailer fetch
-python main.py home https://www.5movierulz.graphics/ --no-trailers
+python main.py home --no-trailers
 
 # Skip both images and trailers
-python main.py home https://www.5movierulz.graphics/ --no-images --no-trailers
+python main.py home --no-images --no-trailers
+
+# Override with a different URL
+python main.py home 1 3 --url https://www.movierulz.com/
 ```
 
 **Output:**
@@ -66,27 +71,30 @@ python main.py home https://www.5movierulz.graphics/ --no-images --no-trailers
 
 Scrapes a specific category like featured, Bollywood, Telugu, etc.
 
-```bash
-# Scrape page 1 only
-python main.py featured https://www.5movierulz.graphics/category/featured/ 1
+The URL is optional — defaults to `DEFAULT_FEATURED_URL` set in `modules/config.py`.
+Pass only page numbers; the scraper automatically appends `page/{number}/` to the base URL.
 
-# Scrape a range of pages (pages 1 to 5)
-python main.py featured https://www.5movierulz.graphics/category/featured/ 1 5
+```bash
+# Scrape page 1 only (uses default URL)
+python main.py featured 1
+
+# Scrape a range of pages (pages 1 to 5, uses default URL)
+python main.py featured 1 5
 
 # Scrape ALL pages automatically (stops when no more movies found)
-python main.py featured https://www.5movierulz.graphics/category/featured/ all
+python main.py featured 1 all
 
 # Scrape all pages, skip images
-python main.py featured https://www.5movierulz.graphics/category/featured/ all --no-images
+python main.py featured 1 all --no-images
 
 # Scrape all pages, skip trailers
-python main.py featured https://www.5movierulz.graphics/category/featured/ all --no-trailers
+python main.py featured 1 all --no-trailers
 
 # Scrape all pages, skip both
-python main.py featured https://www.5movierulz.graphics/category/featured/ all --no-images --no-trailers
+python main.py featured 1 all --no-images --no-trailers
 
-# Different category URL example
-python main.py featured https://www.5movierulz.graphics/telugu-movie-free/ 1 10
+# Override with a different category URL
+python main.py featured 1 10 --url https://www.5movierulz.graphics/telugu-movie-free/
 ```
 
 **Output:**
@@ -169,7 +177,7 @@ Run the home scraper once a day to track new movies:
 
 ```bash
 source venv/bin/activate
-python main.py home https://www.5movierulz.graphics/
+python main.py home
 ```
 
 - First run of the day → downloads new movie posters + trailers, updates Excel

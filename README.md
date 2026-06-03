@@ -11,7 +11,7 @@ A modular Python scraper that fetches movie listings from a Movierulz-style site
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install requests beautifulsoup4 openpyxl cloudscraper playwright yt-dlp
+pip install -r requirements.txt
 playwright install chromium
 ```
 
@@ -22,30 +22,39 @@ playwright install chromium
 ```bash
 source venv/bin/activate
 
-# Home page (latest movies)
-python main.py home <url>
+# Home page (latest movies) — URL optional, defaults to movierulz.com
+python main.py home [start] [end] [--url URL]
 
-# Featured / category pages
-python main.py featured <url> <start> [end | all]
+# Featured / category pages — URL optional, defaults to featured category
+python main.py featured [start] [end | all] [--url URL]
 
 # Search by keyword
 python main.py search <url> <query> [--pages N]
 ```
 
+Default URLs are set in `modules/config.py` — change them there to update globally.
+
 ### Examples
 
 ```bash
-# Scrape home page
-python main.py home https://www.5movierulz.graphics/
+# Scrape home page (uses default URL)
+python main.py home
 
-# Scrape featured page 1
-python main.py featured https://www.5movierulz.graphics/category/featured/ 1
+# Scrape home pages 1 to 3 (uses default URL)
+python main.py home 1 3
 
-# Scrape featured pages 1 to 5
-python main.py featured https://www.5movierulz.graphics/category/featured/ 1 5
+# Scrape featured page 1 (uses default URL)
+python main.py featured 1
+
+# Scrape featured pages 1 to 5 (uses default URL)
+python main.py featured 1 5
 
 # Scrape all featured pages
-python main.py featured https://www.5movierulz.graphics/category/featured/ all
+python main.py featured 1 all
+
+# Override URL explicitly
+python main.py home 1 3 --url https://www.movierulz.com/
+python main.py featured 1 5 --url https://www.5movierulz.graphics/category/featured/
 
 # Search for a movie
 python main.py search https://www.5movierulz.graphics/ "Pushpa" --pages 2
@@ -96,7 +105,7 @@ download/
 
 | File | Purpose |
 |---|---|
-| `modules/config.py` | Paths, headers, known languages |
+| `modules/config.py` | Paths, default URLs, known languages |
 | `modules/parser.py` | Text parsing, language detection |
 | `modules/scraper.py` | HTTP fetch with Cloudflare bypass |
 | `modules/browser.py` | Persistent Chrome session via Playwright |

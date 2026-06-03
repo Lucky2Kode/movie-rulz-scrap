@@ -5,7 +5,7 @@ from modules import home, featured, search
 from modules.downloader import download_images
 from modules.exporter import filter_new, append_new, daily_summary
 from modules.trailer import fetch_trailers
-from modules.config import OUTPUT_DIR, DOWNLOAD_DIR
+from modules.config import OUTPUT_DIR, DOWNLOAD_DIR, DEFAULT_HOME_URL, DEFAULT_FEATURED_URL
 
 
 def cmd_home(args):
@@ -64,7 +64,7 @@ def main():
 
     # home
     p_home = sub.add_parser("home", help="Scrape the site home page (latest movies)")
-    p_home.add_argument("url", help="Site base URL (e.g. https://site.com/)")
+    p_home.add_argument("--url", default=DEFAULT_HOME_URL, help=f"Site base URL (default: {DEFAULT_HOME_URL})")
     p_home.add_argument("start", type=int, nargs="?", default=1, help="Start page (default: 1)")
     p_home.add_argument("end", type=int, nargs="?", default=None, help="End page (default: same as start)")
     p_home.add_argument("--no-images", action="store_true", dest="no_images", help="Skip image downloads")
@@ -73,7 +73,7 @@ def main():
 
     # featured
     p_feat = sub.add_parser("featured", help="Scrape a featured/category listing page")
-    p_feat.add_argument("url", help="Category URL (e.g. https://site.com/bollywood-movie-free/)")
+    p_feat.add_argument("--url", default=DEFAULT_FEATURED_URL, help=f"Category base URL (default: {DEFAULT_FEATURED_URL})")
     p_feat.add_argument("start", type=int, nargs="?", default=1, help="Start page (default: 1)")
     p_feat.add_argument("end", nargs="?", default=None, help="End page number, or 'all' to scrape every page")
     p_feat.add_argument("--no-images", action="store_true", dest="no_images", help="Skip image downloads")

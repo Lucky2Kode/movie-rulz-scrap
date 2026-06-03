@@ -5,6 +5,10 @@ from pathlib import Path
 import cloudscraper
 
 BASE_DIR = Path(sys.executable).parent if getattr(sys, "frozen", False) else Path(__file__).parent.parent
+
+# Change these URLs here to switch default scrape targets
+DEFAULT_HOME_URL = "https://www.movierulz.com/"
+DEFAULT_FEATURED_URL = "https://www.5movierulz.graphics/category/featured/"
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 OUTPUT_DIR = BASE_DIR / "output"
 
