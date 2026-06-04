@@ -58,7 +58,7 @@ python main.py home --no-trailers
 python main.py home --no-images --no-trailers
 
 # Override with a different URL
-python main.py home 1 3 --url https://www.movierulz.com/
+python main.py home 1 3 --url https://www.5movierulz.graphics/
 ```
 
 **Output:**

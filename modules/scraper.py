@@ -47,6 +47,14 @@ def scrape_page(url: str) -> list[dict] | None:
 
     main = soup.find(id="main")
     if not main:
+        # Likely a JS challenge page — retry with real Chrome browser
+        print("  [js challenge] retrying with real Chrome browser ...")
+        html = browser.fetch_html(url)
+        if html:
+            soup = BeautifulSoup(html, "html.parser")
+            main = soup.find(id="main")
+
+    if not main:
         print("  Could not find #main element — page structure may have changed.")
         return []  # page loaded but no listing found = genuine end of pages
 

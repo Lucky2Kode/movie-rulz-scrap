@@ -53,7 +53,7 @@ python main.py featured 1 5
 python main.py featured 1 all
 
 # Override URL explicitly
-python main.py home 1 3 --url https://www.movierulz.com/
+python main.py home 1 3 --url https://www.5movierulz.graphics/
 python main.py featured 1 5 --url https://www.5movierulz.graphics/category/featured/
 
 # Search for a movie
