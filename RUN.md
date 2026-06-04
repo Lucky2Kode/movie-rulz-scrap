@@ -99,7 +99,7 @@ python main.py featured 1 10 --url https://www.5movierulz.graphics/telugu-movie-
 
 **Output:**
 - Excel → `output/featured.xlsx`
-- Images → `downloads/featured/1/`, `downloads/featured/2/`, ... (one folder per page)
+- Images → `downloads/featured/06-04-2026/` (one folder per day, new movies only)
 
 ---
 
@@ -145,7 +145,7 @@ Each Excel file has **two tabs**:
 - Newest entries always appear at the **top**
 - Duplicate movies are **never added twice**
 
-**Tab 2 — Daily Summary**
+**Tab 2 — Daily Summary** (auto-updated after every run)
 
 | Date | New Movies Added |
 |---|---|
@@ -156,33 +156,46 @@ Each Excel file has **two tabs**:
 
 ### Image folders (`downloads/`)
 
+Both `home` and `featured` organize images by date. Only new movies (not already in Excel) get their images downloaded.
+
 ```
 downloads/
 ├── home/
-│   ├── 06-02-2026/        ← movies added on June 2
+│   ├── 06-02-2026/        ← new movies added on June 2
 │   │   ├── Pushpa 2.jpg
 │   │   └── RRR.jpg
-│   └── 06-03-2026/        ← movies added on June 3 (new only)
+│   └── 06-03-2026/        ← new movies added on June 3
 └── featured/
-    ├── 1/                 ← images from page 1
-    ├── 2/                 ← images from page 2
-    └── 715/               ← images from page 715
+    ├── 06-02-2026/        ← new movies added on June 2
+    └── 06-03-2026/        ← new movies added on June 3
 ```
 
 ---
 
 ## Daily Usage (Recommended)
 
-Run the home scraper once a day to track new movies:
+Run these once a day to track new movies:
 
 ```bash
 source venv/bin/activate
 python main.py home
+python main.py featured 1 5
 ```
 
-- First run of the day → downloads new movie posters + trailers, updates Excel
-- Second run same day → skips everything already downloaded, adds only brand-new entries
-- Next day → creates a new date folder, appends to the same Excel file
+**How deduplication works:**
+- Movies already in the Excel file are never added twice
+- Images already on disk are never re-downloaded
+- Each day a new date folder is created — only that day's new movies go into it
+- Running the same command twice on the same day is completely safe
+
+**What each run does:**
+- First run of the day → downloads new posters + trailers, writes new rows to Excel, updates Daily Summary tab
+- Second run same day → skips all already-seen movies, adds only brand-new entries
+- Next day → creates a new date folder, appends new movies to the same Excel file
+
+**Excel tabs:**
+- **Movies** — full listing, newest entries at the top, no duplicates ever
+- **Daily Summary** — automatically updated after every run showing how many movies were added per day
 
 ---
 

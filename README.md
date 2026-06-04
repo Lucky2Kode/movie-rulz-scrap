@@ -87,17 +87,25 @@ Each file has two tabs:
 - **Movies** — full listing, newest entries at the top
 - **Daily Summary** — count of new movies added per day
 
-### Poster images — `download/`
+### Poster images — `downloads/`
 
 ```
-download/
+downloads/
 ├── home/
-│   ├── 06-02-2026/     ← one folder per day
+│   ├── 06-02-2026/     ← one folder per day (new movies only)
 │   └── 06-03-2026/
 └── featured/
-    ├── 1/              ← one folder per page
-    └── 715/
+    ├── 06-02-2026/     ← one folder per day (new movies only)
+    └── 06-03-2026/
 ```
+
+### Daily deduplication
+
+Running the scraper multiple times is safe — it is fully idempotent:
+- Movies already in the Excel file are skipped (never added twice)
+- Images already on disk are never re-downloaded
+- Each day a new date folder is created; only that day's new movies go into it
+- The **Daily Summary** tab is automatically updated after every run
 
 ---
 

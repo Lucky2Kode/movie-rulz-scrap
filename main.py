@@ -16,7 +16,8 @@ def cmd_home(args):
 
 def cmd_featured(args):
     rows = featured.run(args.url, args.start, args.end)
-    _finish(rows, "featured", args)
+    today = date.today().strftime("%m-%d-%Y")
+    _finish(rows, "featured", args, subdir=today)
 
 
 def cmd_search(args):
