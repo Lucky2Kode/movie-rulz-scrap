@@ -63,13 +63,13 @@ python main.py home 1 3 --url https://www.5movierulz.graphics/
 
 **Output:**
 - Excel → `output/home.xlsx`
-- Images → `downloads/home/06-02-2026/` (one folder per day, new movies only)
+- Images → `downloads/home/MM-DD-YYYY/` (one folder per day, new movies only)
 
 ---
 
 ### `featured` — Scrape a category/listing page
 
-Scrapes a specific category like featured, Bollywood, Telugu, etc.
+Scrapes a specific category like featured, Telugu, etc.
 
 The URL is optional — defaults to `DEFAULT_FEATURED_URL` set in `modules/config.py`.
 Pass only page numbers; the scraper automatically appends `page/{number}/` to the base URL.
@@ -99,7 +99,43 @@ python main.py featured 1 10 --url https://www.5movierulz.graphics/telugu-movie-
 
 **Output:**
 - Excel → `output/featured.xlsx`
-- Images → `downloads/featured/06-04-2026/` (one folder per day, new movies only)
+- Images → `downloads/featured/MM-DD-YYYY/` (one folder per day, new movies only)
+
+---
+
+### `bollywood` — Scrape the Bollywood listing
+
+Scrapes the Bollywood movies listing page.
+
+The URL is optional — defaults to `DEFAULT_BOLLYWOOD_BASE_URL` set in `modules/config.py`.
+Pass only page numbers; the scraper automatically appends `page/{number}/` to the base URL.
+
+```bash
+# Scrape page 1 only (uses default URL)
+python main.py bollywood 1
+
+# Scrape a range of pages (pages 1 to 41)
+python main.py bollywood 1 41
+
+# Scrape ALL pages automatically
+python main.py bollywood 1 all
+
+# Skip image downloads
+python main.py bollywood 1 41 --no-images
+
+# Skip trailer fetch
+python main.py bollywood 1 41 --no-trailers
+
+# Skip both
+python main.py bollywood 1 41 --no-images --no-trailers
+
+# Override with a different URL
+python main.py bollywood 1 10 --url https://www.5movierulz.graphics/bollywood-movie-free/
+```
+
+**Output:**
+- Excel → `output/bollywood.xlsx`
+- Images → `downloads/bollywood/MM-DD-YYYY/` (one folder per day, new movies only)
 
 ---
 
@@ -156,7 +192,7 @@ Each Excel file has **two tabs**:
 
 ### Image folders (`downloads/`)
 
-Both `home` and `featured` organize images by date. Only new movies (not already in Excel) get their images downloaded.
+All commands (`home`, `featured`, `bollywood`) organize images by date. Only new movies (not already in Excel) get their images downloaded.
 
 ```
 downloads/
@@ -165,10 +201,27 @@ downloads/
 │   │   ├── Pushpa 2.jpg
 │   │   └── RRR.jpg
 │   └── 06-03-2026/        ← new movies added on June 3
-└── featured/
-    ├── 06-02-2026/        ← new movies added on June 2
-    └── 06-03-2026/        ← new movies added on June 3
+├── featured/
+│   ├── 06-02-2026/
+│   └── 06-03-2026/
+└── bollywood/
+    ├── 06-02-2026/
+    └── 06-03-2026/
 ```
+
+---
+
+## Changing Default URLs
+
+All default URLs are defined in `modules/config.py`:
+
+```python
+DEFAULT_HOME_URL = "https://www.5movierulz.graphics/"
+DEFAULT_FEATURED_URL = "https://www.5movierulz.graphics/category/featured/"
+DEFAULT_BOLLYWOOD_BASE_URL = "https://www.5movierulz.graphics/bollywood-movie-free/"
+```
+
+Change any value here — it takes effect everywhere without touching any other file.
 
 ---
 
@@ -180,6 +233,7 @@ Run these once a day to track new movies:
 source venv/bin/activate
 python main.py home
 python main.py featured 1 5
+python main.py bollywood 1 5
 ```
 
 **How deduplication works:**
@@ -194,7 +248,7 @@ python main.py featured 1 5
 - Next day → creates a new date folder, appends new movies to the same Excel file
 
 **Excel tabs:**
-- **Movies** — full listing, newest entries at the top, no duplicates ever
+- **Movies / Bollywood** — full listing, newest entries at the top, no duplicates ever
 - **Daily Summary** — automatically updated after every run showing how many movies were added per day
 
 ---
@@ -205,5 +259,6 @@ python main.py featured 1 5
 python main.py --help
 python main.py home --help
 python main.py featured --help
+python main.py bollywood --help
 python main.py search --help
 ```

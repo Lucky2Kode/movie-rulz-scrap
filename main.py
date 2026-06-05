@@ -1,11 +1,11 @@
 import sys
 import argparse
 from datetime import date
-from modules import home, featured, search
+from modules import home, featured, search, bollywood
 from modules.downloader import download_images
 from modules.exporter import filter_new, append_new, daily_summary
 from modules.trailer import fetch_trailers
-from modules.config import OUTPUT_DIR, DOWNLOAD_DIR, DEFAULT_HOME_URL, DEFAULT_FEATURED_URL
+from modules.config import OUTPUT_DIR, DOWNLOAD_DIR, DEFAULT_HOME_URL, DEFAULT_FEATURED_URL, DEFAULT_BOLLYWOOD_BASE_URL
 
 
 def cmd_home(args):
@@ -20,20 +20,27 @@ def cmd_featured(args):
     _finish(rows, "featured", args, subdir=today)
 
 
+def cmd_bollywood(args):
+    rows = bollywood.run(args.url, args.start, args.end)
+    today = date.today().strftime("%m-%d-%Y")
+    _finish(rows, "bollywood", args, subdir=today)
+
+
 def cmd_search(args):
     rows = search.run(args.url, args.query, args.pages)
     _finish(rows, f"search_{args.query.replace(' ', '_')}", args)
 
 
-def _finish(rows: list[dict], label: str, args, subdir: str = None):
+def _finish(rows: list[dict], label: str, args, subdir: str = None, sheet_name: str = None):
     if not rows:
         print("No movie entries found.")
         return
 
     out = OUTPUT_DIR / f"{label}.xlsx"
+    effective_sheet = sheet_name or label.capitalize()
 
     # Filter to new movies first, then only download images for those
-    new_rows = filter_new(rows, out)
+    new_rows = filter_new(rows, out, sheet_name=effective_sheet)
     if not new_rows:
         print("\nNo new movies to add.")
         daily_summary(out)
@@ -46,7 +53,7 @@ def _finish(rows: list[dict], label: str, args, subdir: str = None):
     if not args.no_trailers:
         fetch_trailers(new_rows)
 
-    new_rows = append_new(new_rows, out, sheet_name=label.capitalize())
+    new_rows = append_new(new_rows, out, sheet_name=effective_sheet)
     daily_summary(out)
 
     if new_rows:
@@ -81,6 +88,15 @@ def main():
     p_feat.add_argument("--no-trailers", action="store_true", dest="no_trailers", help="Skip trailer URL fetch")
     p_feat.set_defaults(func=cmd_featured)
 
+    # bollywood
+    p_boll = sub.add_parser("bollywood", help="Scrape Bollywood movies listing")
+    p_boll.add_argument("start", type=int, nargs="?", default=1, help="Start page (default: 1)")
+    p_boll.add_argument("end", nargs="?", default=None, help="End page number, or 'all' to scrape every page")
+    p_boll.add_argument("--url", default=DEFAULT_BOLLYWOOD_BASE_URL, help=f"Base URL (default: {DEFAULT_BOLLYWOOD_BASE_URL})")
+    p_boll.add_argument("--no-images", action="store_true", dest="no_images", help="Skip image downloads")
+    p_boll.add_argument("--no-trailers", action="store_true", dest="no_trailers", help="Skip trailer URL fetch")
+    p_boll.set_defaults(func=cmd_bollywood)
+
     # search
     p_search = sub.add_parser("search", help="Search movies by keyword")
     p_search.add_argument("url", help="Site base URL (e.g. https://site.com/)")
@@ -111,7 +127,19 @@ def main():
             print(f"Error: end page ({args.end}) must be >= start page ({args.start})")
             sys.exit(1)
 
+    if args.command == "bollywood":
+        if args.end is None:
+            args.end = args.start
+        elif str(args.end).lower() == "all":
+            args.end = bollywood.ALL_PAGES
+        else:
+            args.end = int(args.end)
+            if args.end < args.start:
+                print(f"Error: end page ({args.end}) must be >= start page ({args.start})")
+                sys.exit(1)
+
     args.func(args)
+
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ BASE_DIR = Path(sys.executable).parent if getattr(sys, "frozen", False) else Pat
 # Change these URLs here to switch default scrape targets
 DEFAULT_HOME_URL = "https://www.5movierulz.graphics/"
 DEFAULT_FEATURED_URL = "https://www.5movierulz.graphics/category/featured/"
+DEFAULT_BOLLYWOOD_BASE_URL = "https://www.5movierulz.graphics/bollywood-movie-free/"
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 OUTPUT_DIR = BASE_DIR / "output"
 

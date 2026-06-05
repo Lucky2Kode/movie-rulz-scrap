@@ -8,11 +8,14 @@ MOVIE_HEADERS = ["Movie", "Year", "Lang", "Page", "Image File", "Trailer URL", "
 DAILY_HEADERS = ["Date", "New Movies Added"]
 
 
-def _load_existing_titles(path: Path) -> set[str]:
+def _load_existing_titles(path: Path, sheet_name: str = None) -> set[str]:
     if not path.exists():
         return set()
     wb = openpyxl.load_workbook(path)
-    ws = wb.active
+    if sheet_name and sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+    else:
+        ws = wb.active
     titles = set()
     for row in ws.iter_rows(min_row=2, values_only=True):
         if row[0]:
@@ -20,9 +23,9 @@ def _load_existing_titles(path: Path) -> set[str]:
     return titles
 
 
-def filter_new(rows: list[dict], out_path: Path) -> list[dict]:
-    """Return only rows whose movie title is not already in the Excel file."""
-    existing = _load_existing_titles(out_path)
+def filter_new(rows: list[dict], out_path: Path, sheet_name: str = None) -> list[dict]:
+    """Return only rows whose movie title is not already in the given sheet."""
+    existing = _load_existing_titles(out_path, sheet_name)
     return [r for r in rows if r.get("movie", "").strip().lower() not in existing]
 
 
@@ -32,9 +35,8 @@ def _autofit(ws):
         ws.column_dimensions[col[0].column_letter].width = min(max_len + 4, 60)
 
 
-def _rebuild_daily_sheet(wb, movies_ws):
-    """Rebuild the Daily Summary sheet from the Movies sheet data."""
-    # Remove existing daily sheet if present
+def _rebuild_daily_sheet(wb):
+    """Rebuild the Daily Summary sheet by aggregating across all data sheets."""
     if "Daily Summary" in wb.sheetnames:
         del wb["Daily Summary"]
 
@@ -43,12 +45,16 @@ def _rebuild_daily_sheet(wb, movies_ws):
     for cell in ds[1]:
         cell.font = Font(bold=True)
 
-    # Date Added is column index 5 (0-based) in the new 6-column format
     date_col = MOVIE_HEADERS.index("Date Added")
     counts: dict[str, int] = {}
-    for row in movies_ws.iter_rows(min_row=2, values_only=True):
-        day = str(row[date_col]).strip() if len(row) > date_col and row[date_col] else "unknown"
-        counts[day] = counts.get(day, 0) + 1
+
+    for sheet_name in wb.sheetnames:
+        if sheet_name == "Daily Summary":
+            continue
+        ws = wb[sheet_name]
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            day = str(row[date_col]).strip() if len(row) > date_col and row[date_col] else "unknown"
+            counts[day] = counts.get(day, 0) + 1
 
     for day in sorted(counts):
         ds.append([day, counts[day]])
@@ -59,6 +65,7 @@ def _rebuild_daily_sheet(wb, movies_ws):
 def append_new(rows: list[dict], out_path: Path, sheet_name: str = "Movies") -> list[dict]:
     """
     Append only movies not already in out_path.
+    Creates a new tab if sheet_name doesn't exist yet (e.g. per-year bollywood tabs).
     Returns the list of newly added rows.
     Stamps each new row with today's date.
     Updates the Daily Summary tab automatically.
@@ -68,10 +75,15 @@ def append_new(rows: list[dict], out_path: Path, sheet_name: str = "Movies") -> 
 
     new_rows = rows  # already filtered by caller via filter_new()
 
-    # Load or create workbook
     if out_path.exists():
         wb = openpyxl.load_workbook(out_path)
-        ws = wb.active
+        if sheet_name in wb.sheetnames:
+            ws = wb[sheet_name]
+        else:
+            ws = wb.create_sheet(sheet_name)
+            ws.append(MOVIE_HEADERS)
+            for cell in ws[1]:
+                cell.font = Font(bold=True)
     else:
         wb = openpyxl.Workbook()
         ws = wb.active
@@ -92,10 +104,10 @@ def append_new(rows: list[dict], out_path: Path, sheet_name: str = "Movies") -> 
         ws.cell(i, 7, today)
 
     _autofit(ws)
-    _rebuild_daily_sheet(wb, ws)
+    _rebuild_daily_sheet(wb)
     wb.save(out_path)
 
-    print(f"\n{len(new_rows)} new movie(s) added to {out_path}  [{today}]")
+    print(f"\n{len(new_rows)} new movie(s) added to {out_path} [{sheet_name}]  [{today}]")
     return new_rows
 
 
