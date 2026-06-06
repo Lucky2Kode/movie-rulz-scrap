@@ -217,7 +217,7 @@ Scrapes the Hollywood featured movies listing page.
 
 The URL is optional — defaults to `DEFAULT_HOLLYWOOD_BASE_URL` set in `modules/config.py`.
 Pass only page numbers; the scraper automatically appends `page/{number}` to the base URL.
-Images are saved in **page-based folders** (`downloads/hollywood/1/`, `downloads/hollywood/2/`, etc.).
+Images are saved in **date-based folders** (`downloads/hollywood/MM-DD-YYYY/`), same as all other modules.
 
 ```bash
 # Scrape page 1 only (uses default URL)
@@ -244,7 +244,7 @@ python main.py hollywood 1 10 --url https://www.5movierulz.discount/category/hol
 
 **Output:**
 - Excel → `output/hollywood.xlsx` (Hollywood tab + Daily Summary tab)
-- Images → `downloads/hollywood/{page}/` (one folder per page number)
+- Images → `downloads/hollywood/MM-DD-YYYY/` (one folder per day, new movies only)
 
 ---
 
@@ -324,9 +324,8 @@ downloads/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
 └── hollywood/
-    ├── 1/              ← page-based folders (not date-based)
-    ├── 2/
-    └── 3/
+    ├── 06-02-2026/
+    └── 06-03-2026/
 ```
 
 ---

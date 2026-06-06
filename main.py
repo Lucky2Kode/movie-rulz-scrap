@@ -40,8 +40,8 @@ def cmd_tamil(args):
 
 def cmd_hollywood(args):
     rows = hollywood.run(args.url, args.start, args.end)
-    # no subdir → downloader groups images by page number automatically
-    _finish(rows, "hollywood", args)
+    today = date.today().strftime("%m-%d-%Y")
+    _finish(rows, "hollywood", args, subdir=today)
 
 
 def cmd_search(args):

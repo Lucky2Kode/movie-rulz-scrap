@@ -150,9 +150,8 @@ downloads/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
 └── hollywood/
-    ├── 1/              ← page-based folders (not date-based)
-    ├── 2/
-    └── 3/
+    ├── 06-02-2026/
+    └── 06-03-2026/
 ```
 
 ### Daily deduplication
