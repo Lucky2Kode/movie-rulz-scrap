@@ -139,6 +139,42 @@ python main.py bollywood 1 10 --url https://www.5movierulz.graphics/bollywood-mo
 
 ---
 
+### `malayalam` — Scrape the Malayalam listing
+
+Scrapes the Malayalam featured movies listing page.
+
+The URL is optional — defaults to `DEFAULT_MALAYALAM_BASE_URL` set in `modules/config.py`.
+Pass only page numbers; the scraper automatically appends `page/{number}` to the base URL.
+
+```bash
+# Scrape page 1 only (uses default URL)
+python main.py malayalam 1
+
+# Scrape a range of pages (pages 1 to 45)
+python main.py malayalam 1 45
+
+# Scrape ALL pages automatically
+python main.py malayalam 1 all
+
+# Skip image downloads
+python main.py malayalam 1 45 --no-images
+
+# Skip trailer fetch
+python main.py malayalam 1 45 --no-trailers
+
+# Skip both
+python main.py malayalam 1 45 --no-images --no-trailers
+
+# Override with a different URL
+python main.py malayalam 1 10 --url https://www.5movierulz.discount/category/malayalam-featured
+```
+
+**Output:**
+- Excel → `output/malayalam.xlsx` (Malayalam tab + Daily Summary tab)
+- Images → `downloads/malayalam/MM-DD-YYYY/` (one folder per day, new movies only)
+
+---
+
 ### `search` — Search movies by keyword
 
 Searches the site for a specific movie name or keyword.
@@ -181,18 +217,19 @@ Each Excel file has **two tabs**:
 - Newest entries always appear at the **top**
 - Duplicate movies are **never added twice**
 
-**Tab 2 — Daily Summary** (auto-updated after every run)
+**Tab 2 — Daily Summary** (auto-updated after every run, newest date at top)
 
 | Date | New Movies Added |
 |---|---|
-| 2026-06-02 | 24 |
-| 2026-06-03 | 6 |
+| 2026-06-05 | 16 |
+| 2026-06-04 | 24 |
+| 2026-06-02 | 6 |
 
 ---
 
 ### Image folders (`downloads/`)
 
-All commands (`home`, `featured`, `bollywood`) organize images by date. Only new movies (not already in Excel) get their images downloaded.
+All commands (`home`, `featured`, `bollywood`, `malayalam`) organize images by date. Only new movies (not already in Excel) get their images downloaded.
 
 ```
 downloads/
@@ -204,7 +241,10 @@ downloads/
 ├── featured/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
-└── bollywood/
+├── bollywood/
+│   ├── 06-02-2026/
+│   └── 06-03-2026/
+└── malayalam/
     ├── 06-02-2026/
     └── 06-03-2026/
 ```
@@ -219,6 +259,7 @@ All default URLs are defined in `modules/config.py`:
 DEFAULT_HOME_URL = "https://www.5movierulz.graphics/"
 DEFAULT_FEATURED_URL = "https://www.5movierulz.graphics/category/featured/"
 DEFAULT_BOLLYWOOD_BASE_URL = "https://www.5movierulz.graphics/bollywood-movie-free/"
+DEFAULT_MALAYALAM_BASE_URL = "https://www.5movierulz.discount/category/malayalam-featured"
 ```
 
 Change any value here — it takes effect everywhere without touching any other file.
@@ -234,6 +275,7 @@ source venv/bin/activate
 python main.py home
 python main.py featured 1 5
 python main.py bollywood 1 5
+python main.py malayalam 1 5
 ```
 
 **How deduplication works:**
@@ -248,8 +290,8 @@ python main.py bollywood 1 5
 - Next day → creates a new date folder, appends new movies to the same Excel file
 
 **Excel tabs:**
-- **Movies / Bollywood** — full listing, newest entries at the top, no duplicates ever
-- **Daily Summary** — automatically updated after every run showing how many movies were added per day
+- **Movies / Malayalam / Bollywood** — full listing, newest entries at the top, no duplicates ever
+- **Daily Summary** — newest date always at top, shows total movies added per day
 
 ---
 
@@ -260,5 +302,6 @@ python main.py --help
 python main.py home --help
 python main.py featured --help
 python main.py bollywood --help
+python main.py malayalam --help
 python main.py search --help
 ```

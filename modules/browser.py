@@ -84,9 +84,13 @@ def fetch_html(url: str) -> str | None:
         if page is None:
             return None
         page.goto(url, timeout=30000, wait_until="domcontentloaded")
-        # Wait for JS-driven redirects (e.g. adblock detection pages) to settle
+        # Wait for JS-driven redirects to settle, then wait for #main to appear
         try:
             page.wait_for_load_state("networkidle", timeout=10000)
+        except Exception:
+            pass
+        try:
+            page.wait_for_selector("#main", timeout=15000)
         except Exception:
             pass
         return page.content()

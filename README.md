@@ -31,6 +31,9 @@ python main.py featured [start] [end | all] [--url URL]
 # Bollywood listing — URL optional, defaults to config
 python main.py bollywood [start] [end | all] [--url URL]
 
+# Malayalam listing — URL optional, defaults to config
+python main.py malayalam [start] [end | all] [--url URL]
+
 # Search by keyword
 python main.py search <url> <query> [--pages N]
 ```
@@ -46,28 +49,29 @@ python main.py home
 # Home — scrape pages 1 to 3
 python main.py home 1 3
 
-# Featured — scrape page 1
-python main.py featured 1
-
 # Featured — scrape pages 1 to 5
 python main.py featured 1 5
 
 # Featured — scrape all pages
 python main.py featured 1 all
 
-# Bollywood — scrape page 1
-python main.py bollywood 1
-
 # Bollywood — scrape pages 1 to 41
 python main.py bollywood 1 41
 
-# Bollywood — scrape all pages
-python main.py bollywood 1 all
+# Malayalam — scrape page 1
+python main.py malayalam 1
+
+# Malayalam — scrape pages 1 to 45
+python main.py malayalam 1 45
+
+# Malayalam — scrape all pages
+python main.py malayalam 1 all
 
 # Override URL explicitly
 python main.py home 1 3 --url https://www.5movierulz.graphics/
 python main.py featured 1 5 --url https://www.5movierulz.graphics/category/featured/
 python main.py bollywood 1 10 --url https://www.5movierulz.graphics/bollywood-movie-free/
+python main.py malayalam 1 10 --url https://www.5movierulz.discount/category/malayalam-featured
 
 # Search for a movie
 python main.py search https://www.5movierulz.graphics/ "Pushpa" --pages 2
@@ -98,7 +102,7 @@ python main.py search https://www.5movierulz.graphics/ "Pushpa" --pages 2
 
 Each file has two tabs:
 - **Movies** (or named tab) — full listing, newest entries at the top
-- **Daily Summary** — count of new movies added per day, auto-updated after every run
+- **Daily Summary** — latest run date at top, shows date and total movies added per day
 
 ### Poster images — `downloads/`
 
@@ -108,10 +112,13 @@ downloads/
 │   ├── 06-02-2026/     ← one folder per day (new movies only)
 │   └── 06-03-2026/
 ├── featured/
-│   ├── 06-02-2026/     ← one folder per day (new movies only)
+│   ├── 06-02-2026/
 │   └── 06-03-2026/
-└── bollywood/
-    ├── 06-02-2026/     ← one folder per day (new movies only)
+├── bollywood/
+│   ├── 06-02-2026/
+│   └── 06-03-2026/
+└── malayalam/
+    ├── 06-02-2026/
     └── 06-03-2026/
 ```
 
@@ -121,7 +128,7 @@ Running the scraper multiple times is safe — it is fully idempotent:
 - Movies already in the Excel file are skipped (never added twice)
 - Images already on disk are never re-downloaded
 - Each day a new date folder is created; only that day's new movies go into it
-- The **Daily Summary** tab is automatically updated after every run
+- The **Daily Summary** tab is automatically updated after every run (newest date at top)
 
 ---
 
@@ -139,4 +146,5 @@ Running the scraper multiple times is safe — it is fully idempotent:
 | `modules/home.py` | Home page module |
 | `modules/featured.py` | Featured/category page module |
 | `modules/bollywood.py` | Bollywood listing module |
+| `modules/malayalam.py` | Malayalam listing module |
 | `modules/search.py` | Search module |

@@ -56,7 +56,7 @@ def _rebuild_daily_sheet(wb):
             day = str(row[date_col]).strip() if len(row) > date_col and row[date_col] else "unknown"
             counts[day] = counts.get(day, 0) + 1
 
-    for day in sorted(counts):
+    for day in sorted(counts, reverse=True):
         ds.append([day, counts[day]])
 
     _autofit(ds)

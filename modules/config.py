@@ -10,6 +10,9 @@ BASE_DIR = Path(sys.executable).parent if getattr(sys, "frozen", False) else Pat
 DEFAULT_HOME_URL = "https://www.5movierulz.graphics/"
 DEFAULT_FEATURED_URL = "https://www.5movierulz.graphics/category/featured/"
 DEFAULT_BOLLYWOOD_BASE_URL = "https://www.5movierulz.graphics/bollywood-movie-free/"
+# DEFAULT_MALAYALAM_BASE_URL = "https://www.5movierulz.graphics/category/malayalam-movie-YYYY/"  # previous
+# DEFAULT_MALAYALAM_BASE_URL = "https://www.5movierulz.discount/category/malayalam-movies-YYYY"  # previous
+DEFAULT_MALAYALAM_BASE_URL = "https://www.5movierulz.discount/category/malayalam-featured"
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 OUTPUT_DIR = BASE_DIR / "output"
 

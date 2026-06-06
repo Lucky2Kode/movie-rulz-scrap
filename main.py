@@ -1,11 +1,11 @@
 import sys
 import argparse
 from datetime import date
-from modules import home, featured, search, bollywood
+from modules import home, featured, search, bollywood, malayalam
 from modules.downloader import download_images
 from modules.exporter import filter_new, append_new, daily_summary
 from modules.trailer import fetch_trailers
-from modules.config import OUTPUT_DIR, DOWNLOAD_DIR, DEFAULT_HOME_URL, DEFAULT_FEATURED_URL, DEFAULT_BOLLYWOOD_BASE_URL
+from modules.config import OUTPUT_DIR, DOWNLOAD_DIR, DEFAULT_HOME_URL, DEFAULT_FEATURED_URL, DEFAULT_BOLLYWOOD_BASE_URL, DEFAULT_MALAYALAM_BASE_URL
 
 
 def cmd_home(args):
@@ -24,6 +24,12 @@ def cmd_bollywood(args):
     rows = bollywood.run(args.url, args.start, args.end)
     today = date.today().strftime("%m-%d-%Y")
     _finish(rows, "bollywood", args, subdir=today)
+
+
+def cmd_malayalam(args):
+    rows = malayalam.run(args.url, args.start, args.end)
+    today = date.today().strftime("%m-%d-%Y")
+    _finish(rows, "malayalam", args, subdir=today)
 
 
 def cmd_search(args):
@@ -97,6 +103,15 @@ def main():
     p_boll.add_argument("--no-trailers", action="store_true", dest="no_trailers", help="Skip trailer URL fetch")
     p_boll.set_defaults(func=cmd_bollywood)
 
+    # malayalam
+    p_mal = sub.add_parser("malayalam", help="Scrape Malayalam movies listing")
+    p_mal.add_argument("start", type=int, nargs="?", default=1, help="Start page (default: 1)")
+    p_mal.add_argument("end", nargs="?", default=None, help="End page number, or 'all' to scrape every page")
+    p_mal.add_argument("--url", default=DEFAULT_MALAYALAM_BASE_URL, help=f"Base URL with YYYY placeholder (default: {DEFAULT_MALAYALAM_BASE_URL})")
+    p_mal.add_argument("--no-images", action="store_true", dest="no_images", help="Skip image downloads")
+    p_mal.add_argument("--no-trailers", action="store_true", dest="no_trailers", help="Skip trailer URL fetch")
+    p_mal.set_defaults(func=cmd_malayalam)
+
     # search
     p_search = sub.add_parser("search", help="Search movies by keyword")
     p_search.add_argument("url", help="Site base URL (e.g. https://site.com/)")
@@ -132,6 +147,17 @@ def main():
             args.end = args.start
         elif str(args.end).lower() == "all":
             args.end = bollywood.ALL_PAGES
+        else:
+            args.end = int(args.end)
+            if args.end < args.start:
+                print(f"Error: end page ({args.end}) must be >= start page ({args.start})")
+                sys.exit(1)
+
+    if args.command == "malayalam":
+        if args.end is None:
+            args.end = args.start
+        elif str(args.end).lower() == "all":
+            args.end = malayalam.ALL_PAGES
         else:
             args.end = int(args.end)
             if args.end < args.start:
