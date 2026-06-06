@@ -114,8 +114,8 @@ python main.py search https://www.5movierulz.graphics/ "Pushpa" --pages 2
 | Date Added | Date first seen |
 
 Each file has two tabs:
-- **Movies** (or named tab) — full listing, newest entries at the top
-- **Daily Summary** — latest run date at top, shows date and total movies added per day
+- **Named tab** (Home / Featured / Bollywood / Malayalam / Tamil) — full listing, newest entries at the top, no duplicates ever
+- **Daily Summary** — newest date at top, shows date and total movies added per day
 
 ### Poster images — `downloads/`
 

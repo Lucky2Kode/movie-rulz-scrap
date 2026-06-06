@@ -62,7 +62,7 @@ python main.py home 1 3 --url https://www.5movierulz.graphics/
 ```
 
 **Output:**
-- Excel → `output/home.xlsx`
+- Excel → `output/home.xlsx` (Home tab + Daily Summary tab)
 - Images → `downloads/home/MM-DD-YYYY/` (one folder per day, new movies only)
 
 ---
@@ -98,7 +98,7 @@ python main.py featured 1 10 --url https://www.5movierulz.graphics/telugu-movie-
 ```
 
 **Output:**
-- Excel → `output/featured.xlsx`
+- Excel → `output/featured.xlsx` (Featured tab + Daily Summary tab)
 - Images → `downloads/featured/MM-DD-YYYY/` (one folder per day, new movies only)
 
 ---
@@ -134,7 +134,7 @@ python main.py bollywood 1 10 --url https://www.5movierulz.graphics/bollywood-mo
 ```
 
 **Output:**
-- Excel → `output/bollywood.xlsx`
+- Excel → `output/bollywood.xlsx` (Bollywood tab + Daily Summary tab)
 - Images → `downloads/bollywood/MM-DD-YYYY/` (one folder per day, new movies only)
 
 ---
@@ -265,7 +265,7 @@ Each Excel file has **two tabs**:
 
 ### Image folders (`downloads/`)
 
-All commands (`home`, `featured`, `bollywood`, `malayalam`) organize images by date. Only new movies (not already in Excel) get their images downloaded.
+All commands (`home`, `featured`, `bollywood`, `malayalam`, `tamil`) organize images by date. Only new movies (not already in Excel) get their images downloaded.
 
 ```
 downloads/
@@ -331,7 +331,7 @@ python main.py tamil 1 5
 - Next day → creates a new date folder, appends new movies to the same Excel file
 
 **Excel tabs:**
-- **Movies / Malayalam / Bollywood** — full listing, newest entries at the top, no duplicates ever
+- **Home / Featured / Bollywood / Malayalam / Tamil** — full listing per command, newest entries at the top, no duplicates ever
 - **Daily Summary** — newest date always at top, shows total movies added per day
 
 ---
