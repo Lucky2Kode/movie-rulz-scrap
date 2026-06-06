@@ -97,7 +97,7 @@ def main():
     # home
     p_home = sub.add_parser("home", help="Scrape the site home page (latest movies)")
     p_home.add_argument("--url", default=DEFAULT_HOME_URL, help=f"Site base URL (default: {DEFAULT_HOME_URL})")
-    p_home.add_argument("start", type=int, nargs="?", default=1, help="Start page (default: 1)")
+    p_home.add_argument("start", type=int, nargs="?", default=None, help="Start page (omit to scrape home URL only)")
     p_home.add_argument("end", type=int, nargs="?", default=None, help="End page (default: same as start)")
     p_home.add_argument("--no-images", action="store_true", dest="no_images", help="Skip image downloads")
     p_home.add_argument("--no-trailers", action="store_true", dest="no_trailers", help="Skip trailer URL fetch")
@@ -181,11 +181,12 @@ def main():
                 sys.exit(1)
 
     if args.command == "home":
-        if args.end is None:
-            args.end = args.start
-        if args.end < args.start:
-            print(f"Error: end page ({args.end}) must be >= start page ({args.start})")
-            sys.exit(1)
+        if args.start is not None:
+            if args.end is None:
+                args.end = args.start
+            elif args.end < args.start:
+                print(f"Error: end page ({args.end}) must be >= start page ({args.start})")
+                sys.exit(1)
 
     if args.command == "bollywood":
         if args.end is None:
