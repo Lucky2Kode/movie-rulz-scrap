@@ -16,7 +16,8 @@ def cmd_home(args):
         _finish(rows, "home", args, subdir=today, sheet_name="Home")
     else:
         # Page args — movies/page/N, write to homeNpages.xlsx / HomeNPages sheet
-        _finish(rows, "homeNpages", args, subdir=today, sheet_name="HomeNPages")
+        # no subdir → downloader groups images by page number (downloads/homeNpages/1/, /2/, ...)
+        _finish(rows, "homeNpages", args, sheet_name="HomeNPages")
 
 
 def cmd_featured(args):
