@@ -108,7 +108,7 @@ def fetch_bytes(url: str) -> bytes | None:
         page = _get_page()
         if page is None:
             return None
-        response = page.goto(url, timeout=20000, wait_until="commit")
+        response = page.goto(url, timeout=45000, wait_until="commit")
         return response.body() if response and response.ok else None
     except Exception as e:
         print(f"  [browser fetch error] {e}")

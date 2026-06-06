@@ -1,20 +1,38 @@
 import time
 from pathlib import Path
+import requests as _requests
 from requests.exceptions import SSLError, ConnectionError
 from .config import DOWNLOAD_DIR, make_session
 from . import browser
 from .parser import safe_filename
 
+_PLAIN_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Referer": "https://www.5movierulz.discount/",
+}
+
 
 def _download_bytes(url: str) -> bytes | None:
+    # 1. Try cloudscraper (Cloudflare bypass)
     try:
         resp = make_session().get(url, timeout=20)
         resp.raise_for_status()
         return resp.content
     except (SSLError, ConnectionError):
-        return browser.fetch_bytes(url)
+        pass
     except Exception:
         return None
+
+    # 2. Try plain requests with browser-like headers (faster than browser)
+    try:
+        resp = _requests.get(url, headers=_PLAIN_HEADERS, timeout=30, verify=False)
+        resp.raise_for_status()
+        return resp.content
+    except Exception:
+        pass
+
+    # 3. Last resort: real Chrome browser
+    return browser.fetch_bytes(url)
 
 
 def download_images(rows: list[dict], label: str = "page", subdir: str = None):
