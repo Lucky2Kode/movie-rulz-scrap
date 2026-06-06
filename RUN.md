@@ -175,6 +175,42 @@ python main.py malayalam 1 10 --url https://www.5movierulz.discount/category/mal
 
 ---
 
+### `tamil` — Scrape the Tamil listing
+
+Scrapes the Tamil featured movies listing page.
+
+The URL is optional — defaults to `DEFAULT_TAMIL_BASE_URL` set in `modules/config.py`.
+Pass only page numbers; the scraper automatically appends `page/{number}` to the base URL.
+
+```bash
+# Scrape page 1 only (uses default URL)
+python main.py tamil 1
+
+# Scrape a range of pages (pages 1 to 45)
+python main.py tamil 1 45
+
+# Scrape ALL pages automatically
+python main.py tamil 1 all
+
+# Skip image downloads
+python main.py tamil 1 45 --no-images
+
+# Skip trailer fetch
+python main.py tamil 1 45 --no-trailers
+
+# Skip both
+python main.py tamil 1 45 --no-images --no-trailers
+
+# Override with a different URL
+python main.py tamil 1 10 --url https://www.5movierulz.discount/category/tamil-featured
+```
+
+**Output:**
+- Excel → `output/tamil.xlsx` (Tamil tab + Daily Summary tab)
+- Images → `downloads/tamil/MM-DD-YYYY/` (one folder per day, new movies only)
+
+---
+
 ### `search` — Search movies by keyword
 
 Searches the site for a specific movie name or keyword.
@@ -244,7 +280,10 @@ downloads/
 ├── bollywood/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
-└── malayalam/
+├── malayalam/
+│   ├── 06-02-2026/
+│   └── 06-03-2026/
+└── tamil/
     ├── 06-02-2026/
     └── 06-03-2026/
 ```
@@ -260,6 +299,7 @@ DEFAULT_HOME_URL = "https://www.5movierulz.graphics/"
 DEFAULT_FEATURED_URL = "https://www.5movierulz.graphics/category/featured/"
 DEFAULT_BOLLYWOOD_BASE_URL = "https://www.5movierulz.graphics/bollywood-movie-free/"
 DEFAULT_MALAYALAM_BASE_URL = "https://www.5movierulz.discount/category/malayalam-featured"
+DEFAULT_TAMIL_BASE_URL = "https://www.5movierulz.discount/category/tamil-featured"
 ```
 
 Change any value here — it takes effect everywhere without touching any other file.
@@ -276,6 +316,7 @@ python main.py home
 python main.py featured 1 5
 python main.py bollywood 1 5
 python main.py malayalam 1 5
+python main.py tamil 1 5
 ```
 
 **How deduplication works:**
@@ -303,5 +344,6 @@ python main.py home --help
 python main.py featured --help
 python main.py bollywood --help
 python main.py malayalam --help
+python main.py tamil --help
 python main.py search --help
 ```

@@ -34,6 +34,9 @@ python main.py bollywood [start] [end | all] [--url URL]
 # Malayalam listing — URL optional, defaults to config
 python main.py malayalam [start] [end | all] [--url URL]
 
+# Tamil listing — URL optional, defaults to config
+python main.py tamil [start] [end | all] [--url URL]
+
 # Search by keyword
 python main.py search <url> <query> [--pages N]
 ```
@@ -67,11 +70,21 @@ python main.py malayalam 1 45
 # Malayalam — scrape all pages
 python main.py malayalam 1 all
 
+# Tamil — scrape page 1
+python main.py tamil 1
+
+# Tamil — scrape pages 1 to 45
+python main.py tamil 1 45
+
+# Tamil — scrape all pages
+python main.py tamil 1 all
+
 # Override URL explicitly
 python main.py home 1 3 --url https://www.5movierulz.graphics/
 python main.py featured 1 5 --url https://www.5movierulz.graphics/category/featured/
 python main.py bollywood 1 10 --url https://www.5movierulz.graphics/bollywood-movie-free/
 python main.py malayalam 1 10 --url https://www.5movierulz.discount/category/malayalam-featured
+python main.py tamil 1 10 --url https://www.5movierulz.discount/category/tamil-featured
 
 # Search for a movie
 python main.py search https://www.5movierulz.graphics/ "Pushpa" --pages 2
@@ -117,7 +130,10 @@ downloads/
 ├── bollywood/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
-└── malayalam/
+├── malayalam/
+│   ├── 06-02-2026/
+│   └── 06-03-2026/
+└── tamil/
     ├── 06-02-2026/
     └── 06-03-2026/
 ```
@@ -147,4 +163,5 @@ Running the scraper multiple times is safe — it is fully idempotent:
 | `modules/featured.py` | Featured/category page module |
 | `modules/bollywood.py` | Bollywood listing module |
 | `modules/malayalam.py` | Malayalam listing module |
+| `modules/tamil.py` | Tamil listing module |
 | `modules/search.py` | Search module |
