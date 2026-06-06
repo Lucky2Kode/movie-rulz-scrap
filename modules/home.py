@@ -1,13 +1,20 @@
 import time
-from .parser import page_url
 from .scraper import scrape_page
+
+
+def _page_url(page: int, base: str) -> str:
+    """Build page URL without trailing slash after page number (works on both .graphics and .discount domains)."""
+    base = base.rstrip("/") + "/"
+    if page <= 1:
+        return base
+    return f"{base}page/{page}"
 
 
 def run(base_url: str, start: int = 1, end: int = 1) -> list[dict]:
     """Scrape the site home page (latest/recent movies)."""
     all_rows = []
     for page in range(start, end + 1):
-        url = page_url(page, base_url)
+        url = _page_url(page, base_url)
         print(f"--- [home] Page {page}: {url}")
         rows = scrape_page(url)
         if rows is None:
