@@ -11,7 +11,12 @@ from modules.config import OUTPUT_DIR, DOWNLOAD_DIR, DEFAULT_HOME_URL, DEFAULT_F
 def cmd_home(args):
     rows = home.run(args.url, args.start, args.end)
     today = date.today().strftime("%m-%d-%Y")
-    _finish(rows, "home", args, subdir=today)
+    if args.start is None:
+        # No page args — home URL, write to home.xlsx / Home sheet
+        _finish(rows, "home", args, subdir=today, sheet_name="Home")
+    else:
+        # Page args — movies/page/N, write to homeNpages.xlsx / HomeNPages sheet
+        _finish(rows, "homeNpages", args, subdir=today, sheet_name="HomeNPages")
 
 
 def cmd_featured(args):
