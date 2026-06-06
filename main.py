@@ -1,11 +1,11 @@
 import sys
 import argparse
 from datetime import date
-from modules import home, featured, search, bollywood, malayalam, tamil
+from modules import home, featured, search, bollywood, malayalam, tamil, hollywood
 from modules.downloader import download_images
 from modules.exporter import filter_new, append_new, daily_summary
 from modules.trailer import fetch_trailers
-from modules.config import OUTPUT_DIR, DOWNLOAD_DIR, DEFAULT_HOME_URL, DEFAULT_FEATURED_URL, DEFAULT_BOLLYWOOD_BASE_URL, DEFAULT_MALAYALAM_BASE_URL, DEFAULT_TAMIL_BASE_URL
+from modules.config import OUTPUT_DIR, DOWNLOAD_DIR, DEFAULT_HOME_URL, DEFAULT_FEATURED_URL, DEFAULT_BOLLYWOOD_BASE_URL, DEFAULT_MALAYALAM_BASE_URL, DEFAULT_TAMIL_BASE_URL, DEFAULT_HOLLYWOOD_BASE_URL
 
 
 def cmd_home(args):
@@ -36,6 +36,12 @@ def cmd_tamil(args):
     rows = tamil.run(args.url, args.start, args.end)
     today = date.today().strftime("%m-%d-%Y")
     _finish(rows, "tamil", args, subdir=today)
+
+
+def cmd_hollywood(args):
+    rows = hollywood.run(args.url, args.start, args.end)
+    # no subdir → downloader groups images by page number automatically
+    _finish(rows, "hollywood", args)
 
 
 def cmd_search(args):
@@ -118,6 +124,15 @@ def main():
     p_mal.add_argument("--no-trailers", action="store_true", dest="no_trailers", help="Skip trailer URL fetch")
     p_mal.set_defaults(func=cmd_malayalam)
 
+    # hollywood
+    p_hol = sub.add_parser("hollywood", help="Scrape Hollywood movies listing")
+    p_hol.add_argument("start", type=int, nargs="?", default=1, help="Start page (default: 1)")
+    p_hol.add_argument("end", nargs="?", default=None, help="End page number, or 'all' to scrape every page")
+    p_hol.add_argument("--url", default=DEFAULT_HOLLYWOOD_BASE_URL, help=f"Base URL (default: {DEFAULT_HOLLYWOOD_BASE_URL})")
+    p_hol.add_argument("--no-images", action="store_true", dest="no_images", help="Skip image downloads")
+    p_hol.add_argument("--no-trailers", action="store_true", dest="no_trailers", help="Skip trailer URL fetch")
+    p_hol.set_defaults(func=cmd_hollywood)
+
     # tamil
     p_tam = sub.add_parser("tamil", help="Scrape Tamil movies listing")
     p_tam.add_argument("start", type=int, nargs="?", default=1, help="Start page (default: 1)")
@@ -184,6 +199,17 @@ def main():
             args.end = args.start
         elif str(args.end).lower() == "all":
             args.end = tamil.ALL_PAGES
+        else:
+            args.end = int(args.end)
+            if args.end < args.start:
+                print(f"Error: end page ({args.end}) must be >= start page ({args.start})")
+                sys.exit(1)
+
+    if args.command == "hollywood":
+        if args.end is None:
+            args.end = args.start
+        elif str(args.end).lower() == "all":
+            args.end = hollywood.ALL_PAGES
         else:
             args.end = int(args.end)
             if args.end < args.start:

@@ -14,6 +14,7 @@ DEFAULT_BOLLYWOOD_BASE_URL = "https://www.5movierulz.graphics/bollywood-movie-fr
 # DEFAULT_MALAYALAM_BASE_URL = "https://www.5movierulz.discount/category/malayalam-movies-YYYY"  # previous
 DEFAULT_MALAYALAM_BASE_URL = "https://www.5movierulz.discount/category/malayalam-featured"
 DEFAULT_TAMIL_BASE_URL = "https://www.5movierulz.discount/category/tamil-featured"
+DEFAULT_HOLLYWOOD_BASE_URL = "https://www.5movierulz.discount/category/hollywood-featured"
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 OUTPUT_DIR = BASE_DIR / "output"
 

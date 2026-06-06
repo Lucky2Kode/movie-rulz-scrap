@@ -211,6 +211,43 @@ python main.py tamil 1 10 --url https://www.5movierulz.discount/category/tamil-f
 
 ---
 
+### `hollywood` — Scrape the Hollywood listing
+
+Scrapes the Hollywood featured movies listing page.
+
+The URL is optional — defaults to `DEFAULT_HOLLYWOOD_BASE_URL` set in `modules/config.py`.
+Pass only page numbers; the scraper automatically appends `page/{number}` to the base URL.
+Images are saved in **page-based folders** (`downloads/hollywood/1/`, `downloads/hollywood/2/`, etc.).
+
+```bash
+# Scrape page 1 only (uses default URL)
+python main.py hollywood 1
+
+# Scrape a range of pages (pages 1 to 20)
+python main.py hollywood 1 20
+
+# Scrape ALL pages automatically
+python main.py hollywood 1 all
+
+# Skip image downloads
+python main.py hollywood 1 20 --no-images
+
+# Skip trailer fetch
+python main.py hollywood 1 20 --no-trailers
+
+# Skip both
+python main.py hollywood 1 20 --no-images --no-trailers
+
+# Override with a different URL
+python main.py hollywood 1 10 --url https://www.5movierulz.discount/category/hollywood-featured
+```
+
+**Output:**
+- Excel → `output/hollywood.xlsx` (Hollywood tab + Daily Summary tab)
+- Images → `downloads/hollywood/{page}/` (one folder per page number)
+
+---
+
 ### `search` — Search movies by keyword
 
 Searches the site for a specific movie name or keyword.
@@ -283,9 +320,13 @@ downloads/
 ├── malayalam/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
-└── tamil/
-    ├── 06-02-2026/
-    └── 06-03-2026/
+├── tamil/
+│   ├── 06-02-2026/
+│   └── 06-03-2026/
+└── hollywood/
+    ├── 1/              ← page-based folders (not date-based)
+    ├── 2/
+    └── 3/
 ```
 
 ---
@@ -300,6 +341,7 @@ DEFAULT_FEATURED_URL = "https://www.5movierulz.graphics/category/featured/"
 DEFAULT_BOLLYWOOD_BASE_URL = "https://www.5movierulz.graphics/bollywood-movie-free/"
 DEFAULT_MALAYALAM_BASE_URL = "https://www.5movierulz.discount/category/malayalam-featured"
 DEFAULT_TAMIL_BASE_URL = "https://www.5movierulz.discount/category/tamil-featured"
+DEFAULT_HOLLYWOOD_BASE_URL = "https://www.5movierulz.discount/category/hollywood-featured"
 ```
 
 Change any value here — it takes effect everywhere without touching any other file.
@@ -317,6 +359,7 @@ python main.py featured 1 5
 python main.py bollywood 1 5
 python main.py malayalam 1 5
 python main.py tamil 1 5
+python main.py hollywood 1 5
 ```
 
 **How deduplication works:**
@@ -331,7 +374,7 @@ python main.py tamil 1 5
 - Next day → creates a new date folder, appends new movies to the same Excel file
 
 **Excel tabs:**
-- **Home / Featured / Bollywood / Malayalam / Tamil** — full listing per command, newest entries at the top, no duplicates ever
+- **Home / Featured / Bollywood / Malayalam / Tamil / Hollywood** — full listing per command, newest entries at the top, no duplicates ever
 - **Daily Summary** — newest date always at top, shows total movies added per day
 
 ---
@@ -345,5 +388,6 @@ python main.py featured --help
 python main.py bollywood --help
 python main.py malayalam --help
 python main.py tamil --help
+python main.py hollywood --help
 python main.py search --help
 ```

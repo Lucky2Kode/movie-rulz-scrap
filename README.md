@@ -37,6 +37,9 @@ python main.py malayalam [start] [end | all] [--url URL]
 # Tamil listing — URL optional, defaults to config
 python main.py tamil [start] [end | all] [--url URL]
 
+# Hollywood listing — URL optional, defaults to config
+python main.py hollywood [start] [end | all] [--url URL]
+
 # Search by keyword
 python main.py search <url> <query> [--pages N]
 ```
@@ -79,12 +82,22 @@ python main.py tamil 1 45
 # Tamil — scrape all pages
 python main.py tamil 1 all
 
+# Hollywood — scrape page 1
+python main.py hollywood 1
+
+# Hollywood — scrape pages 1 to 20
+python main.py hollywood 1 20
+
+# Hollywood — scrape all pages
+python main.py hollywood 1 all
+
 # Override URL explicitly
 python main.py home 1 3 --url https://www.5movierulz.graphics/
 python main.py featured 1 5 --url https://www.5movierulz.graphics/category/featured/
 python main.py bollywood 1 10 --url https://www.5movierulz.graphics/bollywood-movie-free/
 python main.py malayalam 1 10 --url https://www.5movierulz.discount/category/malayalam-featured
 python main.py tamil 1 10 --url https://www.5movierulz.discount/category/tamil-featured
+python main.py hollywood 1 10 --url https://www.5movierulz.discount/category/hollywood-featured
 
 # Search for a movie
 python main.py search https://www.5movierulz.graphics/ "Pushpa" --pages 2
@@ -114,7 +127,7 @@ python main.py search https://www.5movierulz.graphics/ "Pushpa" --pages 2
 | Date Added | Date first seen |
 
 Each file has two tabs:
-- **Named tab** (Home / Featured / Bollywood / Malayalam / Tamil) — full listing, newest entries at the top, no duplicates ever
+- **Named tab** (Home / Featured / Bollywood / Malayalam / Tamil / Hollywood) — full listing, newest entries at the top, no duplicates ever
 - **Daily Summary** — newest date at top, shows date and total movies added per day
 
 ### Poster images — `downloads/`
@@ -133,9 +146,13 @@ downloads/
 ├── malayalam/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
-└── tamil/
-    ├── 06-02-2026/
-    └── 06-03-2026/
+├── tamil/
+│   ├── 06-02-2026/
+│   └── 06-03-2026/
+└── hollywood/
+    ├── 1/              ← page-based folders (not date-based)
+    ├── 2/
+    └── 3/
 ```
 
 ### Daily deduplication
@@ -164,4 +181,5 @@ Running the scraper multiple times is safe — it is fully idempotent:
 | `modules/bollywood.py` | Bollywood listing module |
 | `modules/malayalam.py` | Malayalam listing module |
 | `modules/tamil.py` | Tamil listing module |
+| `modules/hollywood.py` | Hollywood listing module |
 | `modules/search.py` | Search module |
