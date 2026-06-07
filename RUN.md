@@ -35,35 +35,51 @@ deactivate
 
 ## Step 3 — Run the Scraper
 
-### `home` — Scrape the home page (latest movies)
+### `home` — Scrape the home page (no page args)
 
-Scrapes the main page of the site for the most recently added movies.
-
-The URL is optional — defaults to `DEFAULT_HOME_URL` set in `modules/config.py`.
+Scrapes `https://www.5movierulz.discount/` directly — the home/latest movies page.
 
 ```bash
-# Basic run — scrape page 1 (uses default URL)
+# Scrape home page (uses default URL)
 python main.py home
 
-# Scrape multiple pages (uses default URL)
-python main.py home 1 3
-
-# Skip image downloads (faster, Excel only)
+# Skip image downloads
 python main.py home --no-images
 
 # Skip trailer fetch
 python main.py home --no-trailers
 
-# Skip both images and trailers
+# Skip both
 python main.py home --no-images --no-trailers
-
-# Override with a different URL
-python main.py home 1 3 --url https://www.5movierulz.graphics/
 ```
 
 **Output:**
 - Excel → `output/home.xlsx` (Home tab + Daily Summary tab)
-- Images → `downloads/home/MM-DD-YYYY/` (one folder per day, new movies only)
+- Images → `downloads/home/MM-DD-YYYY/` (date-based, new movies only)
+
+---
+
+### `home` with page numbers — Scrape paginated movies listing
+
+When page numbers are passed, scrapes `https://www.5movierulz.discount/movies/page/{n}` and writes to a **separate** Excel file.
+
+```bash
+# Scrape page 1 of movies listing
+python main.py home 1
+
+# Scrape pages 1 to 5
+python main.py home 1 5
+
+# Skip image downloads
+python main.py home 1 5 --no-images
+
+# Skip both
+python main.py home 1 5 --no-images --no-trailers
+```
+
+**Output:**
+- Excel → `output/homeNpages.xlsx` (HomeNPages tab + Daily Summary tab)
+- Images → `downloads/homeNpages/1/`, `downloads/homeNpages/2/` … (page-based folders)
 
 ---
 
@@ -217,7 +233,6 @@ Scrapes the Hollywood featured movies listing page.
 
 The URL is optional — defaults to `DEFAULT_HOLLYWOOD_BASE_URL` set in `modules/config.py`.
 Pass only page numbers; the scraper automatically appends `page/{number}` to the base URL.
-Images are saved in **date-based folders** (`downloads/hollywood/MM-DD-YYYY/`), same as all other modules.
 
 ```bash
 # Scrape page 1 only (uses default URL)
@@ -331,23 +346,25 @@ Each Excel file has **two tabs**:
 
 | Date | New Movies Added |
 |---|---|
-| 2026-06-05 | 16 |
-| 2026-06-04 | 24 |
+| 2026-06-06 | 16 |
+| 2026-06-05 | 24 |
 | 2026-06-02 | 6 |
 
 ---
 
 ### Image folders (`downloads/`)
 
-All commands (`home`, `featured`, `bollywood`, `malayalam`, `tamil`) organize images by date. Only new movies (not already in Excel) get their images downloaded.
-
 ```
 downloads/
 ├── home/
-│   ├── 06-02-2026/        ← new movies added on June 2
+│   ├── 06-02-2026/        ← date-based (python main.py home)
 │   │   ├── Pushpa 2.jpg
 │   │   └── RRR.jpg
-│   └── 06-03-2026/        ← new movies added on June 3
+│   └── 06-03-2026/
+├── homeNpages/
+│   ├── 1/                 ← page-based (python main.py home 1 5)
+│   ├── 2/
+│   └── 3/
 ├── featured/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
@@ -364,7 +381,7 @@ downloads/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
 └── telugu/
-    ├── 1/              ← page-based folders
+    ├── 1/                 ← page-based (python main.py telugu 1 5)
     ├── 2/
     └── 3/
 ```
@@ -376,7 +393,7 @@ downloads/
 All default URLs are defined in `modules/config.py`:
 
 ```python
-DEFAULT_HOME_URL = "https://www.5movierulz.graphics/"
+DEFAULT_HOME_URL = "https://www.5movierulz.discount/"
 DEFAULT_FEATURED_URL = "https://www.5movierulz.graphics/category/featured/"
 DEFAULT_BOLLYWOOD_BASE_URL = "https://www.5movierulz.graphics/bollywood-movie-free/"
 DEFAULT_MALAYALAM_BASE_URL = "https://www.5movierulz.discount/category/malayalam-featured"
@@ -401,6 +418,7 @@ python main.py bollywood 1 5
 python main.py malayalam 1 5
 python main.py tamil 1 5
 python main.py hollywood 1 5
+python main.py telugu 1 5
 ```
 
 **How deduplication works:**
@@ -415,7 +433,7 @@ python main.py hollywood 1 5
 - Next day → creates a new date folder, appends new movies to the same Excel file
 
 **Excel tabs:**
-- **Home / Featured / Bollywood / Malayalam / Tamil / Hollywood / Telugu** — full listing per command, newest entries at the top, no duplicates ever
+- **Home / HomeNPages / Featured / Bollywood / Malayalam / Tamil / Hollywood / Telugu** — full listing per command, newest entries at the top, no duplicates ever
 - **Daily Summary** — newest date always at top, shows total movies added per day
 
 ---

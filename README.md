@@ -22,7 +22,7 @@ playwright install chromium
 ```bash
 source venv/bin/activate
 
-# Home page (latest movies) — URL optional, defaults to config
+# Home page (no page args → home URL; with page args → movies/page/N)
 python main.py home [start] [end] [--url URL]
 
 # Featured / category pages — URL optional, defaults to config
@@ -52,10 +52,10 @@ Default URLs are set in `modules/config.py` — change them there to update glob
 ### Examples
 
 ```bash
-# Home — scrape page 1 (uses default URL)
+# Home — no page args: scrapes https://www.5movierulz.discount/ → output/home.xlsx
 python main.py home
 
-# Home — scrape pages 1 to 3
+# Home — with page args: scrapes .../movies/page/N → output/homeNpages.xlsx
 python main.py home 1 3
 
 # Featured — scrape pages 1 to 5
@@ -85,17 +85,11 @@ python main.py tamil 1 45
 # Tamil — scrape all pages
 python main.py tamil 1 all
 
-# Hollywood — scrape page 1
-python main.py hollywood 1
-
 # Hollywood — scrape pages 1 to 20
 python main.py hollywood 1 20
 
 # Hollywood — scrape all pages
 python main.py hollywood 1 all
-
-# Telugu — scrape page 1
-python main.py telugu 1
 
 # Telugu — scrape pages 1 to 20
 python main.py telugu 1 20
@@ -104,7 +98,7 @@ python main.py telugu 1 20
 python main.py telugu 1 all
 
 # Override URL explicitly
-python main.py home 1 3 --url https://www.5movierulz.graphics/
+python main.py home 1 3 --url https://www.5movierulz.discount/
 python main.py featured 1 5 --url https://www.5movierulz.graphics/category/featured/
 python main.py bollywood 1 10 --url https://www.5movierulz.graphics/bollywood-movie-free/
 python main.py malayalam 1 10 --url https://www.5movierulz.discount/category/malayalam-featured
@@ -140,7 +134,7 @@ python main.py search https://www.5movierulz.graphics/ "Pushpa" --pages 2
 | Date Added | Date first seen |
 
 Each file has two tabs:
-- **Named tab** (Home / Featured / Bollywood / Malayalam / Tamil / Hollywood / Telugu) — full listing, newest entries at the top, no duplicates ever
+- **Named tab** (Home / HomeNPages / Featured / Bollywood / Malayalam / Tamil / Hollywood / Telugu) — full listing, newest entries at the top, no duplicates ever
 - **Daily Summary** — newest date at top, shows date and total movies added per day
 
 ### Poster images — `downloads/`
@@ -148,8 +142,12 @@ Each file has two tabs:
 ```
 downloads/
 ├── home/
-│   ├── 06-02-2026/     ← one folder per day (new movies only)
+│   ├── 06-02-2026/     ← date-based (python main.py home)
 │   └── 06-03-2026/
+├── homeNpages/
+│   ├── 1/              ← page-based (python main.py home 1 5)
+│   ├── 2/
+│   └── 3/
 ├── featured/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
@@ -166,7 +164,7 @@ downloads/
 │   ├── 06-02-2026/
 │   └── 06-03-2026/
 └── telugu/
-    ├── 1/              ← page-based folders
+    ├── 1/              ← page-based
     ├── 2/
     └── 3/
 ```
@@ -192,7 +190,7 @@ Running the scraper multiple times is safe — it is fully idempotent:
 | `modules/downloader.py` | Poster image downloads |
 | `modules/exporter.py` | Excel read/write with deduplication and multi-tab support |
 | `modules/trailer.py` | YouTube trailer URL search via yt-dlp |
-| `modules/home.py` | Home page module |
+| `modules/home.py` | Home page module (two modes: home URL and movies/page/N) |
 | `modules/featured.py` | Featured/category page module |
 | `modules/bollywood.py` | Bollywood listing module |
 | `modules/malayalam.py` | Malayalam listing module |
